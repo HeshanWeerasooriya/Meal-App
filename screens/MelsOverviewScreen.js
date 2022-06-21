@@ -1,16 +1,26 @@
-import React from "react";
+import { useLayoutEffect } from "react";
 import { StyleSheet, FlatList, View } from "react-native";
 
 import MealItem from "../components/MealItem";
-import { MEALS } from "../data/dummy-data";
+import { CATEGORIES, MEALS } from "../data/dummy-data";
 
-function MealsOverviewScreen({ route }) {
+function MealsOverviewScreen({ route, navigation }) {
   // GET CATEGORYID FROM PRESSED GRID ITEM'S CATEGORY ID
   const catID = route.params.categoryId;
 
   const displayedMeals = MEALS.filter((mealItem) => {
     return mealItem.categoryIds.indexOf(catID) >= 0;
   });
+
+  useLayoutEffect(() => {
+    const categoryTitle = CATEGORIES.find(
+      (category) => category.id === catID
+    ).title;
+
+    navigation.setOptions({
+      title: categoryTitle,
+    });
+  }, [catID, navigation]);
 
   function renderMealItem(itemData) {
     const item = itemData.item;
@@ -23,9 +33,7 @@ function MealsOverviewScreen({ route }) {
       duration: item.duration,
     };
 
-    return (
-      <MealItem  {...mealItemProps} />
-    );
+    return <MealItem {...mealItemProps} />;
   }
 
   return (
